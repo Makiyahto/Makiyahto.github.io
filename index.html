@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Jahrie Cadacio — Portfolio</title>
+<title>Jahrie Cadacio, Portfolio</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,500;0,9..144,600;1,9..144,400&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
@@ -14,6 +14,7 @@
     --muted: #6E6E68;
     --line: rgba(17,17,16,0.14);
     --surface: #FFFFFF;
+    --surface-blur: rgba(244,243,240,0.78);
     --serif: 'Fraunces', Georgia, 'Times New Roman', serif;
     --sans: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
   }
@@ -24,6 +25,7 @@
       --muted: #8F8F87;
       --line: rgba(236,236,230,0.14);
       --surface: #141412;
+      --surface-blur: rgba(11,11,10,0.78);
     }
   }
   :root[data-theme="dark"]{
@@ -32,6 +34,7 @@
     --muted: #8F8F87;
     --line: rgba(236,236,230,0.14);
     --surface: #141412;
+    --surface-blur: rgba(11,11,10,0.78);
   }
 
   *{ box-sizing: border-box; }
@@ -49,6 +52,19 @@
     line-height: 1.6;
     -webkit-font-smoothing: antialiased;
     overflow-x: hidden;
+    transition: background-color 0.4s ease, color 0.4s ease;
+  }
+
+  ::view-transition-old(root),
+  ::view-transition-new(root){
+    animation: none;
+    mix-blend-mode: normal;
+  }
+  @media (prefers-reduced-motion: reduce){
+    ::view-transition-old(root),
+    ::view-transition-new(root){
+      display: none;
+    }
   }
 
   a{ color: inherit; }
@@ -73,6 +89,17 @@
     justify-content: space-between;
     padding: 26px 32px;
     mix-blend-mode: difference;
+    background: transparent;
+    border-bottom: 1px solid transparent;
+    transition: background 0.35s ease, border-color 0.35s ease;
+  }
+  nav.scrolled{
+    padding: 16px 32px;
+    background: var(--surface-blur);
+    -webkit-backdrop-filter: blur(14px);
+    backdrop-filter: blur(14px);
+    mix-blend-mode: normal;
+    border-bottom: 1px solid var(--line);
   }
   nav .mark{
     font-family: var(--serif);
@@ -81,9 +108,11 @@
     color: #fff;
     text-decoration: none;
   }
+  nav.scrolled .mark{ color: var(--fg); }
   nav ul{
     list-style: none;
     display: flex;
+    align-items: center;
     gap: 28px;
     margin: 0; padding: 0;
   }
@@ -92,10 +121,25 @@
     text-decoration: none;
     font-size: 0.86rem;
   }
+  nav.scrolled a{ color: var(--fg); }
   nav a:hover{ opacity: 0.65; }
+  .theme-toggle{
+    font-family: var(--sans);
+    font-size: 0.86rem;
+    color: #fff;
+    background: none;
+    border: 1px solid currentColor;
+    border-radius: 100px;
+    padding: 5px 14px;
+    cursor: pointer;
+    line-height: 1.4;
+  }
+  nav.scrolled .theme-toggle{ color: var(--fg); }
+  .theme-toggle:hover{ opacity: 0.7; }
   @media (max-width: 640px){
     nav ul{ gap: 16px; }
     nav a{ font-size: 0.78rem; }
+    .theme-toggle{ padding: 4px 10px; font-size: 0.76rem; }
   }
 
   /* ---------- hero ---------- */
@@ -278,6 +322,110 @@
     .log{ grid-template-columns: 1fr; }
   }
 
+  /* ---------- gallery ---------- */
+  .gallery-grid{
+    display: grid;
+    grid-template-columns: 90px 1fr;
+    gap: 24px;
+  }
+  .gallery-group-title{
+    font-family: var(--serif);
+    font-style: italic;
+    font-weight: 400;
+    font-size: 1.08rem;
+    margin: 0 0 22px;
+    color: var(--fg);
+    max-width: 44ch;
+  }
+  .gallery-items{
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 18px;
+  }
+  .gallery-item{
+    margin: 0;
+    perspective: 1000px;
+  }
+  .gallery-item img{
+    display: block;
+    width: 100%;
+    aspect-ratio: 4 / 3;
+    object-fit: cover;
+    background: var(--surface);
+    border: 1px solid var(--line);
+    cursor: zoom-in;
+    transform: perspective(1000px) rotateX(0deg) rotateY(0deg) scale3d(1,1,1);
+    transition: transform 0.35s cubic-bezier(.2,.8,.2,1), box-shadow 0.35s ease, border-color 0.35s ease;
+    will-change: transform;
+  }
+  .gallery-item:hover img{
+    box-shadow: 0 24px 48px -18px rgba(0,0,0,0.45);
+    border-color: var(--fg);
+  }
+  .gallery-item figcaption{
+    margin-top: 10px;
+    font-size: 0.82rem;
+    color: var(--muted);
+  }
+  @media (prefers-reduced-motion: reduce){
+    .gallery-item img{ transition: border-color 0.35s ease; }
+  }
+  @media (max-width: 780px){
+    .gallery-grid{ grid-template-columns: 1fr; }
+    .gallery-items{ grid-template-columns: 1fr 1fr; }
+  }
+  @media (max-width: 480px){
+    .gallery-items{ grid-template-columns: 1fr; }
+  }
+
+  /* ---------- lightbox ---------- */
+  .lightbox{
+    position: fixed;
+    inset: 0;
+    z-index: 60;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 40px;
+    background: rgba(8,8,7,0.9);
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.3s ease;
+  }
+  .lightbox.active{
+    opacity: 1;
+    pointer-events: auto;
+  }
+  .lightbox img{
+    max-width: 100%;
+    max-height: 100%;
+    object-fit: contain;
+    box-shadow: 0 30px 70px -20px rgba(0,0,0,0.6);
+    transform: scale(0.92);
+    transition: transform 0.35s cubic-bezier(.2,.8,.2,1);
+  }
+  .lightbox.active img{
+    transform: scale(1);
+  }
+  .lightbox-close{
+    position: absolute;
+    top: 22px;
+    right: 28px;
+    width: 40px;
+    height: 40px;
+    border-radius: 100px;
+    border: 1px solid rgba(255,255,255,0.4);
+    background: transparent;
+    color: #fff;
+    font-size: 1.3rem;
+    line-height: 1;
+    cursor: pointer;
+  }
+  .lightbox-close:hover{ opacity: 0.7; }
+  @media (prefers-reduced-motion: reduce){
+    .lightbox, .lightbox img{ transition: none; }
+  }
+
   /* ---------- contact ---------- */
   #contact{ padding-bottom: 120px; }
   .contact-grid{
@@ -335,7 +483,9 @@
     <li><a href="#about">About</a></li>
     <li><a href="#skills">Skills</a></li>
     <li><a href="#building">Building</a></li>
+    <li><a href="#gallery">Moments</a></li>
     <li><a href="#contact">Contact</a></li>
+    <li><button class="theme-toggle" id="theme-toggle" type="button" aria-label="Switch between dark and light mode">Dark</button></li>
   </ul>
 </nav>
 
@@ -343,7 +493,7 @@
   <canvas id="hero-canvas"></canvas>
   <div class="wrap hero-inner">
     <h1 class="name">Jahrie Cadacio</h1>
-    <p class="role"><strong>BSIT Student</strong> — Cavite State University, Main Campus</p>
+    <p class="role"><strong>BSIT Student</strong> at Cavite State University, Main Campus</p>
     <p class="role">First year, first commits. This site tracks what I'm learning and building as I go.</p>
     <div class="scroll-cue"><span class="line"></span><span>Scroll</span></div>
   </div>
@@ -358,7 +508,7 @@
     <div class="about-grid">
       <span></span>
       <div>
-        <p>I'm a first-year BSIT student, currently getting comfortable with the basics of programming, computer systems, and how software actually gets built. This portfolio started as a placeholder — it'll fill in as coursework and personal projects pile up.</p>
+        <p>I'm a first-year BSIT student, currently getting comfortable with the basics of programming, computer systems, and how software actually gets built. This portfolio started as a placeholder, and it'll fill in as coursework and personal projects pile up.</p>
         <p>Long term, I want this page to be less about credentials and more about a visible trail of things I've made, broken, and fixed.</p>
       </div>
       <dl class="facts">
@@ -421,22 +571,51 @@
           <span class="num">01</span>
           <div>
             <h4>This portfolio</h4>
-            <p>A minimal, monochrome site to track my progress through the BSIT program — built as a starting point, meant to be updated.</p>
+            <p>A minimal, monochrome site to track my progress through the BSIT program, built as a starting point and meant to be updated.</p>
           </div>
         </div>
         <div class="log-item">
           <span class="num">02</span>
           <div>
-            <h4>First project — coming soon</h4>
+            <h4>First project (coming soon)</h4>
             <p>Reserved for the first real project once coursework gets there. Replace this entry when it happens.</p>
           </div>
         </div>
         <div class="log-item">
           <span class="num">03</span>
           <div>
-            <h4>Second project — coming soon</h4>
+            <h4>Second project (coming soon)</h4>
             <p>Another open slot. Keep adding entries as things get built.</p>
           </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="gallery">
+  <div class="wrap">
+    <div class="section-head">
+      <span class="index">04</span>
+      <h2>Moments</h2>
+    </div>
+    <div class="gallery-grid">
+      <span></span>
+      <div>
+        <p class="gallery-group-title">𝐀𝐖𝐒 𝐒𝐂𝐃 - 𝐌𝐞𝐠𝐚 𝐌𝐚𝐧𝐢𝐥𝐚: 𝐁𝐮𝐢𝐥𝐝. 𝐅𝐨𝐫𝐠𝐞. 𝐑𝐞𝐩𝐞𝐚𝐭</p>
+        <div class="gallery-items">
+          <figure class="gallery-item">
+            <img src="photostech-talk-1.jpg" alt="First tech talk event" loading="lazy">
+            <figcaption>A small moment that meant a lot. Sitting on the stage after my first tech event, taking in the experience and feeling proud of taking my first step into the tech community.</figcaption>
+          </figure>
+          <figure class="gallery-item">
+            <img src="photosevent-2.jpg" alt="Listening to a talk at the event" loading="lazy">
+            <figcaption>Listening to the CEO's talk and learning from someone with real experience in the tech industry.</figcaption>
+          </figure>
+          <figure class="gallery-item">
+            <img src="photosevent-3.jpg" alt="With friends at the tech event" loading="lazy">
+            <figcaption>First tech event with the people who made the experience even more memorable. Grateful to share this moment with friends while starting my journey in tech.</figcaption>
+          </figure>
         </div>
       </div>
     </div>
@@ -446,7 +625,7 @@
 <section id="contact">
   <div class="wrap">
     <div class="section-head">
-      <span class="index">04</span>
+      <span class="index">05</span>
       <h2>Contact</h2>
     </div>
     <div class="contact-grid">
@@ -470,6 +649,175 @@
   </div>
 </footer>
 
+<div class="lightbox" id="lightbox" aria-hidden="true">
+  <button class="lightbox-close" id="lightbox-close" type="button" aria-label="Close photo">&times;</button>
+  <img id="lightbox-img" src="" alt="">
+</div>
+
+<script>
+(function(){
+  var toggle = document.getElementById('theme-toggle');
+  var root = document.documentElement;
+  var reduceMotion = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  function systemPrefersDark(){
+    return window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
+  }
+
+  function currentTheme(){
+    var attr = root.getAttribute('data-theme');
+    if(attr === 'dark' || attr === 'light') return attr;
+    return systemPrefersDark() ? 'dark' : 'light';
+  }
+
+  function setThemeState(theme){
+    root.setAttribute('data-theme', theme);
+    if(toggle){
+      toggle.textContent = theme === 'dark' ? 'Light' : 'Dark';
+    }
+    if(window.__updateSceneColor) window.__updateSceneColor();
+  }
+
+  function applyTheme(theme, originEvent){
+    try{ localStorage.setItem('theme', theme); }catch(e){}
+
+    var canAnimate = !reduceMotion && document.startViewTransition && originEvent;
+    if(!canAnimate){
+      setThemeState(theme);
+      return;
+    }
+
+    var x = originEvent.clientX;
+    var y = originEvent.clientY;
+    var transition = document.startViewTransition(function(){ setThemeState(theme); });
+
+    transition.ready.then(function(){
+      var endRadius = Math.hypot(
+        Math.max(x, window.innerWidth - x),
+        Math.max(y, window.innerHeight - y)
+      );
+      document.documentElement.animate(
+        {
+          clipPath: [
+            'circle(0px at ' + x + 'px ' + y + 'px)',
+            'circle(' + endRadius + 'px at ' + x + 'px ' + y + 'px)'
+          ]
+        },
+        {
+          duration: 550,
+          easing: 'ease-in-out',
+          pseudoElement: '::view-transition-new(root)'
+        }
+      );
+    }).catch(function(){});
+  }
+
+  var saved = null;
+  try{ saved = localStorage.getItem('theme'); }catch(e){}
+  setThemeState(saved === 'dark' || saved === 'light' ? saved : currentTheme());
+
+  if(toggle){
+    toggle.addEventListener('click', function(e){
+      var next = currentTheme() === 'dark' ? 'light' : 'dark';
+      applyTheme(next, e);
+    });
+  }
+})();
+
+(function(){
+  var nav = document.querySelector('nav');
+  if(!nav) return;
+  var ticking = false;
+  var isScrolled = false;
+
+  function update(){
+    var shouldBeScrolled = window.scrollY > 40;
+    if(shouldBeScrolled !== isScrolled){
+      isScrolled = shouldBeScrolled;
+      nav.classList.toggle('scrolled', isScrolled);
+    }
+    ticking = false;
+  }
+
+  window.addEventListener('scroll', function(){
+    if(!ticking){
+      requestAnimationFrame(update);
+      ticking = true;
+    }
+  }, { passive: true });
+
+  update();
+})();
+</script>
+
+<script>
+(function(){
+  var reduceMotion = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  var lightbox = document.getElementById('lightbox');
+  var lightboxImg = document.getElementById('lightbox-img');
+  var lightboxClose = document.getElementById('lightbox-close');
+  var lastFocused = null;
+
+  function openLightbox(src, alt){
+    if(!lightbox || !lightboxImg) return;
+    lightboxImg.src = src;
+    lightboxImg.alt = alt || '';
+    lightbox.classList.add('active');
+    lightbox.setAttribute('aria-hidden', 'false');
+    lastFocused = document.activeElement;
+    if(lightboxClose) lightboxClose.focus();
+    document.body.style.overflow = 'hidden';
+  }
+
+  function closeLightbox(){
+    if(!lightbox) return;
+    lightbox.classList.remove('active');
+    lightbox.setAttribute('aria-hidden', 'true');
+    document.body.style.overflow = '';
+    if(lastFocused && lastFocused.focus) lastFocused.focus();
+  }
+
+  var items = document.querySelectorAll('.gallery-item img');
+  items.forEach(function(img){
+    var frame = null;
+
+    if(!reduceMotion){
+      img.addEventListener('mousemove', function(e){
+        if(frame) return;
+        frame = requestAnimationFrame(function(){
+          var rect = img.getBoundingClientRect();
+          var px = (e.clientX - rect.left) / rect.width - 0.5;
+          var py = (e.clientY - rect.top) / rect.height - 0.5;
+          var rotateY = px * 14;
+          var rotateX = py * -14;
+          img.style.transform = 'perspective(1000px) rotateX(' + rotateX + 'deg) rotateY(' + rotateY + 'deg) scale3d(1.04,1.04,1.04)';
+          frame = null;
+        });
+      });
+
+      img.addEventListener('mouseleave', function(){
+        img.style.transform = 'perspective(1000px) rotateX(0deg) rotateY(0deg) scale3d(1,1,1)';
+      });
+    }
+
+    img.addEventListener('click', function(){
+      openLightbox(img.src, img.alt);
+    });
+  });
+
+  if(lightboxClose) lightboxClose.addEventListener('click', closeLightbox);
+  if(lightbox){
+    lightbox.addEventListener('click', function(e){
+      if(e.target === lightbox) closeLightbox();
+    });
+  }
+  document.addEventListener('keydown', function(e){
+    if(e.key === 'Escape') closeLightbox();
+  });
+})();
+</script>
+
 <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
 <script>
 (function(){
@@ -486,8 +834,9 @@
     }catch(e){ return fallback; }
   }
 
-  var renderer, scene, camera, mesh;
+  var renderer, scene, camera, group, wireframe, nodes;
   var mouseX = 0, mouseY = 0, targetX = 0, targetY = 0;
+  var spinVelX = 0, spinVelY = 0, pulse = 0;
 
   function init(){
     var w = heroSection.clientWidth;
@@ -502,15 +851,41 @@
     camera.position.set(0, 0, 7);
 
     var lineColor = readColor('--fg', '#111110');
+
+    group = new THREE.Group();
+    group.position.set(1.1, 0.2, 0);
+
     var geo = new THREE.IcosahedronGeometry(2.1, 1);
+
     var edges = new THREE.EdgesGeometry(geo);
-    var mat = new THREE.LineBasicMaterial({ color: new THREE.Color(lineColor), transparent: true, opacity: 0.55 });
-    mesh = new THREE.LineSegments(edges, mat);
-    mesh.position.set(1.1, 0.2, 0);
-    scene.add(mesh);
+    var lineMat = new THREE.LineBasicMaterial({ color: new THREE.Color(lineColor), transparent: true, opacity: 0.4 });
+    wireframe = new THREE.LineSegments(edges, lineMat);
+    group.add(wireframe);
+
+    var pointsMat = new THREE.PointsMaterial({ color: new THREE.Color(lineColor), size: 0.05, sizeAttenuation: true, transparent: true, opacity: 0.9 });
+    nodes = new THREE.Points(geo, pointsMat);
+    group.add(nodes);
+
+    scene.add(group);
 
     window.addEventListener('resize', onResize);
     heroSection.addEventListener('mousemove', onMouseMove);
+    canvas.addEventListener('click', onTap);
+    canvas.style.cursor = 'pointer';
+  }
+
+  function onTap(e){
+    var rect = heroSection.getBoundingClientRect();
+    var offsetX = (e.clientX - rect.left) / rect.width - 0.5;
+    var offsetY = (e.clientY - rect.top) / rect.height - 0.5;
+    spinVelY += offsetX * 0.12;
+    spinVelX += -offsetY * 0.12;
+    pulse = 1;
+    if(reduceMotion){
+      group.rotation.y += offsetX * 0.6;
+      group.rotation.x += -offsetY * 0.6;
+      renderer.render(scene, camera);
+    }
   }
 
   function onResize(){
@@ -529,17 +904,30 @@
 
   function animate(){
     if(reduceMotion){
-      mesh.rotation.set(0.4, 0.6, 0);
+      group.rotation.set(0.4, 0.6, 0);
       renderer.render(scene, camera);
       return;
     }
     requestAnimationFrame(animate);
     mouseX += (targetX - mouseX) * 0.04;
     mouseY += (targetY - mouseY) * 0.04;
-    mesh.rotation.y += 0.0022 + mouseX * 0.0015;
-    mesh.rotation.x += 0.0009 + mouseY * 0.0015;
+    group.rotation.y += 0.0022 + mouseX * 0.0015 + spinVelY;
+    group.rotation.x += 0.0009 + mouseY * 0.0015 + spinVelX;
+    spinVelX *= 0.94;
+    spinVelY *= 0.94;
+    pulse *= 0.92;
+    var s = 1 + pulse * 0.18;
+    group.scale.set(s, s, s);
     renderer.render(scene, camera);
   }
+
+  function updateSceneColor(){
+    if(!wireframe || !nodes) return;
+    var lineColor = readColor('--fg', '#111110');
+    wireframe.material.color.set(lineColor);
+    nodes.material.color.set(lineColor);
+  }
+  window.__updateSceneColor = updateSceneColor;
 
   init();
   animate();
