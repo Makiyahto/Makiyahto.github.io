@@ -4,6 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Jahrie Cadacio, Portfolio</title>
+<link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'><rect width='64' height='64' rx='14' fill='%23111110'/><text x='32' y='43' font-family='Georgia,serif' font-style='italic' font-size='27' fill='white' text-anchor='middle'>JC</text></svg>">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,500;0,9..144,600;1,9..144,400&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
@@ -71,6 +72,8 @@
   :focus-visible{ outline: 1.5px solid var(--fg); outline-offset: 4px; }
 
   .wrap{
+    position: relative;
+    z-index: 1;
     max-width: 1040px;
     margin: 0 auto;
     padding: 0 32px;
@@ -79,11 +82,61 @@
     .wrap{ padding: 0 22px; }
   }
 
+  /* ---------- cursor dot ---------- */
+  .cursor-dot{
+    position: fixed;
+    top: 0; left: 0;
+    width: 10px; height: 10px;
+    margin: -5px 0 0 -5px;
+    border-radius: 50%;
+    background: var(--fg);
+    mix-blend-mode: difference;
+    pointer-events: none;
+    z-index: 15;
+    opacity: 0;
+    transition: opacity 0.3s ease, transform 0.06s linear;
+  }
+  .cursor-dot.active{ opacity: 0.7; }
+
+  /* ---------- reveal on scroll ---------- */
+  .reveal{
+    opacity: 0;
+    transform: translateY(20px);
+    transition: opacity 0.7s ease, transform 0.7s ease;
+  }
+  .reveal.in-view{
+    opacity: 1;
+    transform: none;
+  }
+  @media (prefers-reduced-motion: reduce){
+    .reveal{ opacity: 1; transform: none; transition: none; }
+  }
+
+  /* ---------- section watermark ---------- */
+  .watermark{
+    position: absolute;
+    top: 4px;
+    right: 24px;
+    z-index: 0;
+    font-family: var(--serif);
+    font-style: italic;
+    font-weight: 300;
+    font-size: clamp(4.5rem, 13vw, 9.5rem);
+    line-height: 1;
+    color: var(--fg);
+    opacity: 0.045;
+    pointer-events: none;
+    user-select: none;
+  }
+  @media (max-width: 640px){
+    .watermark{ font-size: clamp(3.5rem, 22vw, 6rem); right: 14px; }
+  }
+
   /* ---------- nav ---------- */
   nav{
     position: fixed;
     top: 0; left: 0; right: 0;
-    z-index: 10;
+    z-index: 20;
     display: flex;
     align-items: center;
     justify-content: space-between;
@@ -91,10 +144,10 @@
     mix-blend-mode: difference;
     background: transparent;
     border-bottom: 1px solid transparent;
-    transition: background 0.35s ease, border-color 0.35s ease;
+    transition: background 0.35s ease, border-color 0.35s ease, padding 0.35s ease;
   }
   nav.scrolled{
-    padding: 16px 32px;
+    padding: 15px 32px;
     background: var(--surface-blur);
     -webkit-backdrop-filter: blur(14px);
     backdrop-filter: blur(14px);
@@ -107,22 +160,36 @@
     letter-spacing: 0.01em;
     color: #fff;
     text-decoration: none;
+    position: relative;
+    z-index: 22;
   }
   nav.scrolled .mark{ color: var(--fg); }
+  nav.menu-open .mark{ color: var(--fg); }
   nav ul{
     list-style: none;
     display: flex;
     align-items: center;
-    gap: 28px;
+    gap: 30px;
     margin: 0; padding: 0;
   }
   nav a{
+    position: relative;
     color: #fff;
     text-decoration: none;
     font-size: 0.86rem;
+    padding-bottom: 3px;
   }
+  nav a::after{
+    content: '';
+    position: absolute;
+    left: 0; bottom: 0;
+    width: 0;
+    height: 1px;
+    background: currentColor;
+    transition: width 0.25s ease;
+  }
+  nav a:hover::after{ width: 100%; }
   nav.scrolled a{ color: var(--fg); }
-  nav a:hover{ opacity: 0.65; }
   .theme-toggle{
     font-family: var(--sans);
     font-size: 0.86rem;
@@ -133,13 +200,86 @@
     padding: 5px 14px;
     cursor: pointer;
     line-height: 1.4;
+    transition: opacity 0.2s ease;
   }
   nav.scrolled .theme-toggle{ color: var(--fg); }
   .theme-toggle:hover{ opacity: 0.7; }
-  @media (max-width: 640px){
-    nav ul{ gap: 16px; }
-    nav a{ font-size: 0.78rem; }
-    .theme-toggle{ padding: 4px 10px; font-size: 0.76rem; }
+
+  .nav-toggle{
+    display: none;
+    position: relative;
+    z-index: 22;
+    flex-direction: column;
+    justify-content: center;
+    align-items: flex-end;
+    gap: 5px;
+    width: 28px;
+    height: 22px;
+    background: none;
+    border: none;
+    padding: 0;
+    cursor: pointer;
+  }
+  .nav-toggle span{
+    display: block;
+    width: 100%;
+    height: 1.5px;
+    background: #fff;
+    transition: transform 0.3s ease, opacity 0.3s ease, background-color 0.3s ease, width 0.3s ease;
+  }
+  nav.scrolled .nav-toggle span{ background: var(--fg); }
+  nav.menu-open .nav-toggle span{ background: var(--fg); }
+  nav.menu-open .nav-toggle span:nth-child(1){ transform: translateY(6.5px) rotate(45deg); width: 100%; }
+  nav.menu-open .nav-toggle span:nth-child(2){ opacity: 0; }
+  nav.menu-open .nav-toggle span:nth-child(3){ transform: translateY(-6.5px) rotate(-45deg); width: 100%; }
+
+  nav.menu-open{ mix-blend-mode: normal; }
+
+  @media (max-width: 720px){
+    .nav-toggle{ display: flex; }
+    nav ul{
+      position: absolute;
+      top: calc(100% + 14px);
+      right: 20px;
+      left: auto;
+      z-index: 21;
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 18px;
+      margin: 0;
+      width: max-content;
+      max-width: 210px;
+      padding: 22px 26px;
+      border-radius: 16px;
+      background: var(--surface-blur);
+      -webkit-backdrop-filter: blur(18px);
+      backdrop-filter: blur(18px);
+      border: 1px solid var(--line);
+      box-shadow: 0 24px 48px -16px rgba(0,0,0,0.35);
+      transform-origin: top right;
+      transform: scale(0.92) translateY(-6px);
+      opacity: 0;
+      pointer-events: none;
+      transition: transform 0.28s cubic-bezier(.2,.8,.2,1), opacity 0.22s ease;
+    }
+    nav ul.open{
+      transform: scale(1) translateY(0);
+      opacity: 1;
+      pointer-events: auto;
+    }
+    nav ul a{
+      color: var(--fg);
+      font-family: var(--serif);
+      font-style: italic;
+      font-size: 1.05rem;
+    }
+    nav ul a::after{ display: none; }
+    nav ul .theme-toggle{
+      color: var(--fg);
+      font-size: 0.82rem;
+      margin-top: 2px;
+      align-self: flex-start;
+    }
   }
 
   /* ---------- hero ---------- */
@@ -161,7 +301,7 @@
     position: relative;
     z-index: 2;
     width: 100%;
-    padding-bottom: 84px;
+    padding-bottom: 76px;
   }
   h1.name{
     font-family: var(--serif);
@@ -183,7 +323,7 @@
     font-weight: 500;
   }
   .scroll-cue{
-    margin-top: 46px;
+    margin-top: 38px;
     font-size: 0.78rem;
     color: var(--muted);
     display: flex;
@@ -198,17 +338,18 @@
   /* ---------- sections ---------- */
   section{
     position: relative;
-    padding: 96px 0;
+    padding: 76px 0;
     border-top: 1px solid var(--line);
+    overflow: hidden;
   }
   @media (max-width: 640px){
-    section{ padding: 64px 0; }
+    section{ padding: 56px 0; }
   }
   .section-head{
     display: grid;
     grid-template-columns: 90px 1fr;
     gap: 24px;
-    margin-bottom: 44px;
+    margin-bottom: 36px;
   }
   .section-head .index{
     font-family: var(--serif);
@@ -224,7 +365,12 @@
     margin: 0;
   }
   @media (max-width: 640px){
-    .section-head{ grid-template-columns: 1fr; gap: 8px; }
+    .section-head{ grid-template-columns: 1fr; gap: 6px; }
+  }
+
+  .spacer{ }
+  @media (max-width: 780px){
+    .spacer{ display: none; }
   }
 
   /* ---------- about ---------- */
@@ -280,11 +426,16 @@
     padding: 10px 0;
     border-top: 1px solid var(--line);
     font-size: 0.98rem;
+    transition: padding-left 0.25s ease, color 0.25s ease;
   }
   .skill-col li:first-child{ border-top: none; }
+  .skill-col li:hover{
+    padding-left: 8px;
+    color: var(--fg);
+  }
   @media (max-width: 780px){
     .skills-grid{ grid-template-columns: 1fr; }
-    .skill-col{ margin-bottom: 28px; }
+    .skill-col{ margin-bottom: 24px; }
   }
 
   /* ---------- building / log ---------- */
@@ -293,15 +444,21 @@
     grid-template-columns: 90px 1fr;
     gap: 24px;
   }
-  .log-list{ }
   .log-item{
     display: grid;
     grid-template-columns: 48px 1fr;
     gap: 20px;
-    padding: 22px 0;
+    padding: 22px 14px;
+    margin: 0 -14px;
     border-top: 1px solid var(--line);
+    border-radius: 6px;
+    transition: background 0.25s ease, transform 0.25s ease;
   }
   .log-item:first-child{ border-top: none; }
+  .log-item:hover{
+    background: var(--surface);
+    transform: translateX(4px);
+  }
   .log-item .num{
     font-family: var(--serif);
     font-style: italic;
@@ -322,6 +479,15 @@
     .log{ grid-template-columns: 1fr; }
   }
 
+  .cert-item .cred-link{
+    display: inline-block;
+    margin-top: 8px;
+    font-size: 0.82rem;
+    text-decoration: none;
+    border-bottom: 1px solid var(--line);
+  }
+  .cert-item .cred-link:hover{ border-bottom-color: var(--fg); }
+
   /* ---------- gallery ---------- */
   .gallery-grid{
     display: grid;
@@ -333,7 +499,7 @@
     font-style: italic;
     font-weight: 400;
     font-size: 1.08rem;
-    margin: 0 0 22px;
+    margin: 0 0 20px;
     color: var(--fg);
     max-width: 44ch;
   }
@@ -427,7 +593,7 @@
   }
 
   /* ---------- contact ---------- */
-  #contact{ padding-bottom: 120px; }
+  #contact{ padding-bottom: 100px; }
   .contact-grid{
     display: grid;
     grid-template-columns: 90px 1fr;
@@ -439,7 +605,7 @@
     font-style: italic;
     font-weight: 400;
     font-size: clamp(2rem, 6vw, 4rem);
-    margin: 0 0 28px;
+    margin: 0 0 26px;
     max-width: 12ch;
   }
   .contact-links{
@@ -447,18 +613,27 @@
     margin: 0; padding: 0;
     display: flex;
     flex-direction: column;
-    gap: 4px;
+    gap: 6px;
   }
   .contact-links a{
-    display: inline-block;
+    display: inline-flex;
+    align-items: center;
+    gap: 12px;
     text-decoration: none;
     font-size: 1.02rem;
-    padding: 4px 0;
+    padding: 8px 0;
     border-bottom: 1px solid transparent;
   }
   .contact-links a:hover{
     border-bottom-color: var(--fg);
+    gap: 16px;
   }
+  .contact-icon{
+    flex-shrink: 0;
+    color: var(--muted);
+    transition: color 0.2s ease;
+  }
+  .contact-links a:hover .contact-icon{ color: var(--fg); }
   @media (max-width: 780px){
     .contact-grid{ grid-template-columns: 1fr; }
   }
@@ -477,9 +652,14 @@
 </head>
 <body>
 
+<div class="cursor-dot" id="cursor-dot"></div>
+
 <nav>
   <a class="mark" href="#hero">Jahrie Cadacio</a>
-  <ul>
+  <button class="nav-toggle" id="nav-toggle" type="button" aria-label="Open menu" aria-expanded="false" aria-controls="nav-menu">
+    <span></span><span></span><span></span>
+  </button>
+  <ul id="nav-menu">
     <li><a href="#about">About</a></li>
     <li><a href="#skills">Skills</a></li>
     <li><a href="#building">Building</a></li>
@@ -500,13 +680,14 @@
 </section>
 
 <section id="about">
+  <span class="watermark" aria-hidden="true">01</span>
   <div class="wrap">
-    <div class="section-head">
+    <div class="section-head reveal">
       <span class="index">01</span>
       <h2>About</h2>
     </div>
-    <div class="about-grid">
-      <span></span>
+    <div class="about-grid reveal">
+      <span class="spacer"></span>
       <div>
         <p>I'm a first-year BSIT student, currently getting comfortable with the basics of programming, computer systems, and how software actually gets built. This portfolio started as a placeholder, and it'll fill in as coursework and personal projects pile up.</p>
         <p>Long term, I want this page to be less about credentials and more about a visible trail of things I've made, broken, and fixed.</p>
@@ -523,13 +704,14 @@
 </section>
 
 <section id="skills">
+  <span class="watermark" aria-hidden="true">02</span>
   <div class="wrap">
-    <div class="section-head">
+    <div class="section-head reveal">
       <span class="index">02</span>
       <h2>Skills</h2>
     </div>
-    <div class="skills-grid">
-      <span></span>
+    <div class="skills-grid reveal">
+      <span class="spacer"></span>
       <div class="skill-col">
         <h3>Languages & Technologies</h3>
         <ul>
@@ -562,13 +744,14 @@
 </section>
 
 <section id="building">
+  <span class="watermark" aria-hidden="true">03</span>
   <div class="wrap">
-    <div class="section-head">
+    <div class="section-head reveal">
       <span class="index">03</span>
       <h2>Building</h2>
     </div>
-    <div class="log">
-      <span></span>
+    <div class="log reveal">
+      <span class="spacer"></span>
       <div class="log-list">
         <div class="log-item">
           <span class="num">01</span>
@@ -597,13 +780,14 @@
 </section>
 
 <section id="gallery">
+  <span class="watermark" aria-hidden="true">04</span>
   <div class="wrap">
-    <div class="section-head">
+    <div class="section-head reveal">
       <span class="index">04</span>
       <h2>Events</h2>
     </div>
-    <div class="gallery-grid">
-      <span></span>
+    <div class="gallery-grid reveal">
+      <span class="spacer"></span>
       <div>
         <p class="gallery-group-title">𝐀𝐖𝐒 𝐒𝐂𝐃 - 𝐌𝐞𝐠𝐚 𝐌𝐚𝐧𝐢𝐥𝐚: 𝐁𝐮𝐢𝐥𝐝. 𝐅𝐨𝐫𝐠𝐞. 𝐑𝐞𝐩𝐞𝐚𝐭</p>
         <div class="gallery-items">
@@ -626,19 +810,35 @@
 </section>
 
 <section id="contact">
+  <span class="watermark" aria-hidden="true">05</span>
   <div class="wrap">
-    <div class="section-head">
+    <div class="section-head reveal">
       <span class="index">05</span>
       <h2>Contact</h2>
     </div>
-    <div class="contact-grid">
-      <span></span>
+    <div class="contact-grid reveal">
+      <span class="spacer"></span>
       <div>
         <p class="contact-big">Let's talk.</p>
         <ul class="contact-links">
-          <li><a href="mailto:jahriecadacio@gmail.com">jahriecadacio@gmail.com</a></li>
-          <li><a href="https://github.com/Makiyahto" target="_blank" rel="noopener">github.com/Makiyahto</a></li>
-          <li><a href="https://www.linkedin.com/in/jahrie-cadacio-847b043ab/" target="_blank" rel="noopener">linkedin.com/in/jahrie-cadacio</a></li>
+          <li>
+            <a href="mailto:jahriecadacio@gmail.com">
+              <svg class="contact-icon" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="14" rx="2"></rect><path d="M3 7l9 6 9-6"></path></svg>
+              <span>jahriecadacio@gmail.com</span>
+            </a>
+          </li>
+          <li>
+            <a href="https://github.com/Makiyahto" target="_blank" rel="noopener">
+              <svg class="contact-icon" viewBox="0 0 24 24" width="18" height="18" fill="currentColor"><path d="M12 0C5.37 0 0 5.37 0 12c0 5.3 3.44 9.8 8.21 11.39.6.11.82-.26.82-.58 0-.29-.01-1.04-.02-2.04-3.34.73-4.04-1.61-4.04-1.61-.55-1.39-1.34-1.76-1.34-1.76-1.09-.75.08-.73.08-.73 1.21.08 1.84 1.24 1.84 1.24 1.07 1.84 2.81 1.31 3.5 1 .11-.78.42-1.31.76-1.61-2.66-.3-5.46-1.33-5.46-5.93 0-1.31.47-2.38 1.24-3.22-.12-.3-.54-1.52.12-3.18 0 0 1.01-.32 3.31 1.23a11.5 11.5 0 0 1 6.02 0c2.3-1.55 3.31-1.23 3.31-1.23.66 1.66.24 2.88.12 3.18.77.84 1.24 1.91 1.24 3.22 0 4.61-2.81 5.63-5.48 5.92.43.37.81 1.1.81 2.22 0 1.6-.02 2.89-.02 3.29 0 .32.22.7.83.58C20.56 21.8 24 17.3 24 12 24 5.37 18.63 0 12 0z"></path></svg>
+              <span>github.com/Makiyahto</span>
+            </a>
+          </li>
+          <li>
+            <a href="https://www.linkedin.com/in/jahrie-cadacio-847b043ab/" target="_blank" rel="noopener">
+              <svg class="contact-icon" viewBox="0 0 24 24" width="18" height="18" fill="currentColor"><path d="M20.45 20.45h-3.55v-5.57c0-1.33-.02-3.03-1.85-3.03-1.85 0-2.14 1.44-2.14 2.94v5.66H9.36V9h3.41v1.56h.05c.47-.9 1.64-1.85 3.38-1.85 3.62 0 4.29 2.38 4.29 5.48v6.26zM5.34 7.43a2.07 2.07 0 1 1 0-4.14 2.07 2.07 0 0 1 0 4.14zM7.12 20.45H3.56V9h3.56v11.45z"></path></svg>
+              <span>linkedin.com/in/jahrie-cadacio</span>
+            </a>
+          </li>
         </ul>
       </div>
     </div>
@@ -656,6 +856,49 @@
   <button class="lightbox-close" id="lightbox-close" type="button" aria-label="Close photo">&times;</button>
   <img id="lightbox-img" src="" alt="">
 </div>
+
+<script>
+(function(){
+  var navToggle = document.getElementById('nav-toggle');
+  var navMenu = document.getElementById('nav-menu');
+  var nav = document.querySelector('nav');
+  if(!navToggle || !navMenu || !nav) return;
+
+  function closeMenu(){
+    navMenu.classList.remove('open');
+    nav.classList.remove('menu-open');
+    navToggle.setAttribute('aria-expanded', 'false');
+  }
+
+  function openMenu(){
+    navMenu.classList.add('open');
+    nav.classList.add('menu-open');
+    navToggle.setAttribute('aria-expanded', 'true');
+  }
+
+  navToggle.addEventListener('click', function(){
+    if(navMenu.classList.contains('open')){
+      closeMenu();
+    }else{
+      openMenu();
+    }
+  });
+
+  navMenu.querySelectorAll('a').forEach(function(link){
+    link.addEventListener('click', closeMenu);
+  });
+
+  window.addEventListener('resize', function(){
+    if(window.innerWidth > 720) closeMenu();
+  });
+
+  document.addEventListener('click', function(e){
+    if(navMenu.classList.contains('open') && !nav.contains(e.target)){
+      closeMenu();
+    }
+  });
+})();
+</script>
 
 <script>
 (function(){
@@ -750,6 +993,55 @@
   }, { passive: true });
 
   update();
+})();
+</script>
+
+<script>
+(function(){
+  var reduceMotion = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  if(reduceMotion) return;
+
+  var els = document.querySelectorAll('.reveal');
+  if(!('IntersectionObserver' in window) || !els.length) return;
+
+  var observer = new IntersectionObserver(function(entries){
+    entries.forEach(function(entry){
+      if(entry.isIntersecting){
+        entry.target.classList.add('in-view');
+        observer.unobserve(entry.target);
+      }
+    });
+  }, { threshold: 0.15, rootMargin: '0px 0px -40px 0px' });
+
+  els.forEach(function(el){ observer.observe(el); });
+})();
+</script>
+
+<script>
+(function(){
+  var dot = document.getElementById('cursor-dot');
+  if(!dot) return;
+  var reduceMotion = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  var isCoarse = window.matchMedia && window.matchMedia('(pointer: coarse)').matches;
+  if(reduceMotion || isCoarse) return;
+
+  var x = 0, y = 0, tx = 0, ty = 0;
+
+  window.addEventListener('mousemove', function(e){
+    tx = e.clientX;
+    ty = e.clientY;
+    dot.classList.add('active');
+  });
+
+  document.addEventListener('mouseleave', function(){ dot.classList.remove('active'); });
+
+  function loop(){
+    x += (tx - x) * 0.25;
+    y += (ty - y) * 0.25;
+    dot.style.transform = 'translate3d(' + x + 'px,' + y + 'px,0)';
+    requestAnimationFrame(loop);
+  }
+  loop();
 })();
 </script>
 
