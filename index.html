@@ -1,0 +1,550 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Jahrie Cadacio — Portfolio</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,500;0,9..144,600;1,9..144,400&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg: #F4F3F0;
+    --fg: #111110;
+    --muted: #6E6E68;
+    --line: rgba(17,17,16,0.14);
+    --surface: #FFFFFF;
+    --serif: 'Fraunces', Georgia, 'Times New Roman', serif;
+    --sans: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  }
+  @media (prefers-color-scheme: dark){
+    :root:not([data-theme="light"]){
+      --bg: #0B0B0A;
+      --fg: #ECECE6;
+      --muted: #8F8F87;
+      --line: rgba(236,236,230,0.14);
+      --surface: #141412;
+    }
+  }
+  :root[data-theme="dark"]{
+    --bg: #0B0B0A;
+    --fg: #ECECE6;
+    --muted: #8F8F87;
+    --line: rgba(236,236,230,0.14);
+    --surface: #141412;
+  }
+
+  *{ box-sizing: border-box; }
+  html{ scroll-behavior: smooth; }
+  @media (prefers-reduced-motion: reduce){
+    html{ scroll-behavior: auto; }
+  }
+
+  body{
+    margin: 0;
+    background: var(--bg);
+    color: var(--fg);
+    font-family: var(--sans);
+    font-size: 16px;
+    line-height: 1.6;
+    -webkit-font-smoothing: antialiased;
+    overflow-x: hidden;
+  }
+
+  a{ color: inherit; }
+  :focus-visible{ outline: 1.5px solid var(--fg); outline-offset: 4px; }
+
+  .wrap{
+    max-width: 1040px;
+    margin: 0 auto;
+    padding: 0 32px;
+  }
+  @media (max-width: 640px){
+    .wrap{ padding: 0 22px; }
+  }
+
+  /* ---------- nav ---------- */
+  nav{
+    position: fixed;
+    top: 0; left: 0; right: 0;
+    z-index: 10;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 26px 32px;
+    mix-blend-mode: difference;
+  }
+  nav .mark{
+    font-family: var(--serif);
+    font-size: 1.05rem;
+    letter-spacing: 0.01em;
+    color: #fff;
+    text-decoration: none;
+  }
+  nav ul{
+    list-style: none;
+    display: flex;
+    gap: 28px;
+    margin: 0; padding: 0;
+  }
+  nav a{
+    color: #fff;
+    text-decoration: none;
+    font-size: 0.86rem;
+  }
+  nav a:hover{ opacity: 0.65; }
+  @media (max-width: 640px){
+    nav ul{ gap: 16px; }
+    nav a{ font-size: 0.78rem; }
+  }
+
+  /* ---------- hero ---------- */
+  #hero{
+    position: relative;
+    min-height: 100svh;
+    display: flex;
+    align-items: flex-end;
+    overflow: hidden;
+  }
+  #hero canvas{
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    display: block;
+  }
+  .hero-inner{
+    position: relative;
+    z-index: 2;
+    width: 100%;
+    padding-bottom: 84px;
+  }
+  h1.name{
+    font-family: var(--serif);
+    font-weight: 500;
+    font-style: italic;
+    font-size: clamp(2.6rem, 8vw, 6.4rem);
+    line-height: 0.98;
+    margin: 0 0 18px;
+    letter-spacing: -0.01em;
+  }
+  .role{
+    font-size: clamp(0.95rem, 2vw, 1.15rem);
+    color: var(--muted);
+    max-width: 480px;
+    margin: 0 0 6px;
+  }
+  .role strong{
+    color: var(--fg);
+    font-weight: 500;
+  }
+  .scroll-cue{
+    margin-top: 46px;
+    font-size: 0.78rem;
+    color: var(--muted);
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  .scroll-cue .line{
+    width: 32px; height: 1px;
+    background: var(--muted);
+  }
+
+  /* ---------- sections ---------- */
+  section{
+    position: relative;
+    padding: 96px 0;
+    border-top: 1px solid var(--line);
+  }
+  @media (max-width: 640px){
+    section{ padding: 64px 0; }
+  }
+  .section-head{
+    display: grid;
+    grid-template-columns: 90px 1fr;
+    gap: 24px;
+    margin-bottom: 44px;
+  }
+  .section-head .index{
+    font-family: var(--serif);
+    font-style: italic;
+    color: var(--muted);
+    font-size: 1rem;
+    padding-top: 4px;
+  }
+  .section-head h2{
+    font-family: var(--serif);
+    font-weight: 400;
+    font-size: clamp(1.6rem, 4vw, 2.4rem);
+    margin: 0;
+  }
+  @media (max-width: 640px){
+    .section-head{ grid-template-columns: 1fr; gap: 8px; }
+  }
+
+  /* ---------- about ---------- */
+  .about-grid{
+    display: grid;
+    grid-template-columns: 90px 1.3fr 1fr;
+    gap: 24px;
+  }
+  .about-grid p{
+    max-width: 52ch;
+    font-size: 1.02rem;
+  }
+  .about-grid p + p{ margin-top: 1.1em; }
+  dl.facts{
+    margin: 0;
+    display: grid;
+    grid-template-columns: auto 1fr;
+    row-gap: 14px;
+    column-gap: 20px;
+    align-content: start;
+  }
+  dl.facts dt{
+    font-size: 0.82rem;
+    color: var(--muted);
+  }
+  dl.facts dd{
+    margin: 0;
+    font-size: 0.94rem;
+    text-align: right;
+  }
+  @media (max-width: 780px){
+    .about-grid{ grid-template-columns: 1fr; }
+    dl.facts dd{ text-align: left; }
+  }
+
+  /* ---------- skills ---------- */
+  .skills-grid{
+    display: grid;
+    grid-template-columns: 90px repeat(3, 1fr);
+    gap: 24px;
+  }
+  .skill-col h3{
+    font-size: 0.82rem;
+    font-weight: 500;
+    color: var(--muted);
+    margin: 0 0 16px;
+  }
+  .skill-col ul{
+    list-style: none;
+    margin: 0; padding: 0;
+  }
+  .skill-col li{
+    padding: 10px 0;
+    border-top: 1px solid var(--line);
+    font-size: 0.98rem;
+  }
+  .skill-col li:first-child{ border-top: none; }
+  @media (max-width: 780px){
+    .skills-grid{ grid-template-columns: 1fr; }
+    .skill-col{ margin-bottom: 28px; }
+  }
+
+  /* ---------- building / log ---------- */
+  .log{
+    display: grid;
+    grid-template-columns: 90px 1fr;
+    gap: 24px;
+  }
+  .log-list{ }
+  .log-item{
+    display: grid;
+    grid-template-columns: 48px 1fr;
+    gap: 20px;
+    padding: 22px 0;
+    border-top: 1px solid var(--line);
+  }
+  .log-item:first-child{ border-top: none; }
+  .log-item .num{
+    font-family: var(--serif);
+    font-style: italic;
+    color: var(--muted);
+  }
+  .log-item h4{
+    margin: 0 0 6px;
+    font-size: 1.08rem;
+    font-weight: 500;
+  }
+  .log-item p{
+    margin: 0;
+    color: var(--muted);
+    font-size: 0.92rem;
+    max-width: 56ch;
+  }
+  @media (max-width: 780px){
+    .log{ grid-template-columns: 1fr; }
+  }
+
+  /* ---------- contact ---------- */
+  #contact{ padding-bottom: 120px; }
+  .contact-grid{
+    display: grid;
+    grid-template-columns: 90px 1fr;
+    gap: 24px;
+    align-items: end;
+  }
+  .contact-big{
+    font-family: var(--serif);
+    font-style: italic;
+    font-weight: 400;
+    font-size: clamp(2rem, 6vw, 4rem);
+    margin: 0 0 28px;
+    max-width: 12ch;
+  }
+  .contact-links{
+    list-style: none;
+    margin: 0; padding: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+  }
+  .contact-links a{
+    display: inline-block;
+    text-decoration: none;
+    font-size: 1.02rem;
+    padding: 4px 0;
+    border-bottom: 1px solid transparent;
+  }
+  .contact-links a:hover{
+    border-bottom-color: var(--fg);
+  }
+  @media (max-width: 780px){
+    .contact-grid{ grid-template-columns: 1fr; }
+  }
+
+  footer{
+    border-top: 1px solid var(--line);
+    padding: 22px 0;
+  }
+  footer .wrap{
+    display: flex;
+    justify-content: space-between;
+    font-size: 0.78rem;
+    color: var(--muted);
+  }
+</style>
+</head>
+<body>
+
+<nav>
+  <a class="mark" href="#hero">Jahrie Cadacio</a>
+  <ul>
+    <li><a href="#about">About</a></li>
+    <li><a href="#skills">Skills</a></li>
+    <li><a href="#building">Building</a></li>
+    <li><a href="#contact">Contact</a></li>
+  </ul>
+</nav>
+
+<section id="hero">
+  <canvas id="hero-canvas"></canvas>
+  <div class="wrap hero-inner">
+    <h1 class="name">Jahrie Cadacio</h1>
+    <p class="role"><strong>BSIT Student</strong> — Cavite State University, Main Campus</p>
+    <p class="role">First year, first commits. This site tracks what I'm learning and building as I go.</p>
+    <div class="scroll-cue"><span class="line"></span><span>Scroll</span></div>
+  </div>
+</section>
+
+<section id="about">
+  <div class="wrap">
+    <div class="section-head">
+      <span class="index">01</span>
+      <h2>About</h2>
+    </div>
+    <div class="about-grid">
+      <span></span>
+      <div>
+        <p>I'm a first-year BSIT student, currently getting comfortable with the basics of programming, computer systems, and how software actually gets built. This portfolio started as a placeholder — it'll fill in as coursework and personal projects pile up.</p>
+        <p>Long term, I want this page to be less about credentials and more about a visible trail of things I've made, broken, and fixed.</p>
+      </div>
+      <dl class="facts">
+        <dt>Program</dt><dd>BSIT</dd>
+        <dt>Year level</dt><dd>1st year</dd>
+        <dt>School</dt><dd>Cavite State University</dd>
+        <dt>Campus</dt><dd>Main Campus</dd>
+        <dt>Status</dt><dd>Actively learning</dd>
+      </dl>
+    </div>
+  </div>
+</section>
+
+<section id="skills">
+  <div class="wrap">
+    <div class="section-head">
+      <span class="index">02</span>
+      <h2>Skills</h2>
+    </div>
+    <div class="skills-grid">
+      <span></span>
+      <div class="skill-col">
+        <h3>Languages</h3>
+        <ul>
+          <li>Java</li>
+          <li>Python</li>
+          <li>HTML</li>
+          <li>CSS</li>
+        </ul>
+      </div>
+      <div class="skill-col">
+        <h3>Software</h3>
+        <ul>
+          <li>Microsoft Word</li>
+          <li>Microsoft Excel</li>
+          <li>Microsoft PowerPoint</li>
+        </ul>
+      </div>
+      <div class="skill-col">
+        <h3>Currently learning</h3>
+        <ul>
+          <li>Git &amp; GitHub</li>
+          <li>Intro to databases</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="building">
+  <div class="wrap">
+    <div class="section-head">
+      <span class="index">03</span>
+      <h2>Building</h2>
+    </div>
+    <div class="log">
+      <span></span>
+      <div class="log-list">
+        <div class="log-item">
+          <span class="num">01</span>
+          <div>
+            <h4>This portfolio</h4>
+            <p>A minimal, monochrome site to track my progress through the BSIT program — built as a starting point, meant to be updated.</p>
+          </div>
+        </div>
+        <div class="log-item">
+          <span class="num">02</span>
+          <div>
+            <h4>First project — coming soon</h4>
+            <p>Reserved for the first real project once coursework gets there. Replace this entry when it happens.</p>
+          </div>
+        </div>
+        <div class="log-item">
+          <span class="num">03</span>
+          <div>
+            <h4>Second project — coming soon</h4>
+            <p>Another open slot. Keep adding entries as things get built.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="contact">
+  <div class="wrap">
+    <div class="section-head">
+      <span class="index">04</span>
+      <h2>Contact</h2>
+    </div>
+    <div class="contact-grid">
+      <span></span>
+      <div>
+        <p class="contact-big">Let's talk.</p>
+        <ul class="contact-links">
+          <li><a href="mailto:jahriecadacio@gmail.com">jahriecadacio@gmail.com</a></li>
+          <li><a href="https://github.com/Makiyahto" target="_blank" rel="noopener">github.com/Makiyahto</a></li>
+          <li><a href="https://www.linkedin.com/in/jahrie-cadacio-847b043ab/" target="_blank" rel="noopener">linkedin.com/in/jahrie-cadacio</a></li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="wrap">
+    <span>Jahrie Cadacio</span>
+    <span>Cavite, Philippines</span>
+  </div>
+</footer>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<script>
+(function(){
+  var heroSection = document.getElementById('hero');
+  var canvas = document.getElementById('hero-canvas');
+  if(!window.THREE || !canvas || !heroSection) return;
+
+  var reduceMotion = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  function readColor(varName, fallback){
+    try{
+      var v = getComputedStyle(document.documentElement).getPropertyValue(varName).trim();
+      return v || fallback;
+    }catch(e){ return fallback; }
+  }
+
+  var renderer, scene, camera, mesh;
+  var mouseX = 0, mouseY = 0, targetX = 0, targetY = 0;
+
+  function init(){
+    var w = heroSection.clientWidth;
+    var h = heroSection.clientHeight;
+
+    renderer = new THREE.WebGLRenderer({ canvas: canvas, alpha: true, antialias: true });
+    renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 2));
+    renderer.setSize(w, h);
+
+    scene = new THREE.Scene();
+    camera = new THREE.PerspectiveCamera(45, w / h, 0.1, 100);
+    camera.position.set(0, 0, 7);
+
+    var lineColor = readColor('--fg', '#111110');
+    var geo = new THREE.IcosahedronGeometry(2.1, 1);
+    var edges = new THREE.EdgesGeometry(geo);
+    var mat = new THREE.LineBasicMaterial({ color: new THREE.Color(lineColor), transparent: true, opacity: 0.55 });
+    mesh = new THREE.LineSegments(edges, mat);
+    mesh.position.set(1.1, 0.2, 0);
+    scene.add(mesh);
+
+    window.addEventListener('resize', onResize);
+    heroSection.addEventListener('mousemove', onMouseMove);
+  }
+
+  function onResize(){
+    var w = heroSection.clientWidth;
+    var h = heroSection.clientHeight;
+    camera.aspect = w / h;
+    camera.updateProjectionMatrix();
+    renderer.setSize(w, h);
+  }
+
+  function onMouseMove(e){
+    var rect = heroSection.getBoundingClientRect();
+    targetX = ((e.clientX - rect.left) / rect.width - 0.5) * 2;
+    targetY = ((e.clientY - rect.top) / rect.height - 0.5) * 2;
+  }
+
+  function animate(){
+    if(reduceMotion){
+      mesh.rotation.set(0.4, 0.6, 0);
+      renderer.render(scene, camera);
+      return;
+    }
+    requestAnimationFrame(animate);
+    mouseX += (targetX - mouseX) * 0.04;
+    mouseY += (targetY - mouseY) * 0.04;
+    mesh.rotation.y += 0.0022 + mouseX * 0.0015;
+    mesh.rotation.x += 0.0009 + mouseY * 0.0015;
+    renderer.render(scene, camera);
+  }
+
+  init();
+  animate();
+})();
+</script>
+
+</body>
+</html>
