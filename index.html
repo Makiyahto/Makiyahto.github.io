@@ -420,6 +420,9 @@
     margin: 0; padding: 0;
   }
   .skill-col li{
+    display: flex;
+    align-items: center;
+    gap: 12px;
     padding: 10px 0;
     border-top: 1px solid var(--line);
     font-size: 0.98rem;
@@ -433,6 +436,35 @@
   @media (max-width: 780px){
     .skills-grid{ grid-template-columns: 1fr; }
     .skill-col{ margin-bottom: 24px; }
+  }
+
+  .skill-icon{
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 25px;
+    height: 25px;
+    flex-shrink: 0;
+    border-radius: 7px;
+    border: 1px solid var(--line);
+    font-family: var(--serif);
+    font-style: italic;
+    font-weight: 500;
+    font-size: 0.66rem;
+    letter-spacing: -0.02em;
+    line-height: 1;
+    color: #fff;
+  }
+  .skill-icon-group{
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    flex-shrink: 0;
+  }
+  .skill-sub{
+    color: var(--muted);
+    font-size: 0.82rem;
+    margin-left: 2px;
   }
 
 
@@ -782,27 +814,38 @@
       <div class="skill-col">
         <h3>Languages & Technologies</h3>
         <ul>
-          <li>Java</li>
-          <li>Python</li>
-          <li>HTML</li>
-          <li>CSS</li>
+          <li><span class="skill-icon" style="background:#ED8B00" aria-hidden="true">J</span>Java</li>
+          <li><span class="skill-icon" style="background:#3776AB" aria-hidden="true">Py</span>Python</li>
+          <li><span class="skill-icon" style="background:#E34F26" aria-hidden="true">H5</span>HTML</li>
+          <li><span class="skill-icon" style="background:#1572B6" aria-hidden="true">C3</span>CSS</li>
         </ul>
       </div>
       <div class="skill-col">
         <h3>Software & Tools</h3>
         <ul>
-          <li>VS Code</li>
-          <li>PyCharm</li>
-          <li>Canva</li>
-          <li>Microsoft Word</li>
-          <li>Microsoft Excel</li>
-          <li>Microsoft PowerPoint</li>
+          <li><span class="skill-icon" style="background:#007ACC" aria-hidden="true">VS</span>VS Code</li>
+          <li><span class="skill-icon" style="background:#1B8E63" aria-hidden="true">PC</span>PyCharm</li>
+          <li><span class="skill-icon" style="background:linear-gradient(135deg,#00C4CC,#7D2AE8)" aria-hidden="true">C</span>Canva</li>
+          <li>
+            <span class="skill-icon-group">
+              <span class="skill-icon" style="background:#2B579A" title="Microsoft Word" aria-label="Microsoft Word">W</span>
+              <span class="skill-icon" style="background:#217346" title="Microsoft Excel" aria-label="Microsoft Excel">X</span>
+              <span class="skill-icon" style="background:#D24726" title="Microsoft PowerPoint" aria-label="Microsoft PowerPoint">P</span>
+            </span>
+            Microsoft Office <span class="skill-sub">Word · Excel · PowerPoint</span>
+          </li>
         </ul>
       </div>
       <div class="skill-col">
         <h3>Currently learning</h3>
         <ul>
-          <li>Git &amp; GitHub</li>
+          <li>
+            <span class="skill-icon-group">
+              <span class="skill-icon" style="background:#F05033" aria-hidden="true">Gi</span>
+              <span class="skill-icon" style="background:#181717" aria-hidden="true">Gh</span>
+            </span>
+            Git &amp; GitHub
+          </li>
           <li>Intro to databases</li>
         </ul>
       </div>
